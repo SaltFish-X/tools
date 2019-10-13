@@ -102,10 +102,11 @@ function Synth(crafter, recipe, maxTrickUses, reliabilityIndex, useConditions, m
  */
 Synth.prototype.calculateBaseProgressIncrease = function(levelDifference, craftsmanship, crafterLevel, recipeLevel) {
   var baseProgress = 0
-
   baseProgress = Math.floor(
-    (levelDifferenceOfCraftsmanShip[recipeLevel] * (0.21 * craftsmanship + 2) * (10000 + craftsmanship)) / (10000 + suggestedCraftsmanship[recipeLevel])
+    (getLevelDif('Craft', levelDifference) * (0.21 * craftsmanship + 2) * (10000 + craftsmanship)) / (10000 + suggestedCraftsmanship[recipeLevel])
   )
+
+  console.log(getLevelDif('Craft', levelDifference), levelDifference, suggestedCraftsmanship[recipeLevel])
   return baseProgress
 }
 
@@ -119,7 +120,7 @@ Synth.prototype.calculateBaseProgressIncrease = function(levelDifference, crafts
  */
 Synth.prototype.calculateBaseQualityIncrease = function(levelDifference, control, crafterLevel, recipeLevel) {
   var baseQuality = 0
-  baseQuality = Math.floor((levelDifferenceOfControl[recipeLevel] * (0.35 * control + 35) * (10000 + control)) / (10000 + suggestedControl[recipeLevel]))
+  baseQuality = Math.floor(getLevelDif('control', levelDifference) * (0.35 * control + 35) * (10000 + control)) / (10000 + suggestedControl[recipeLevel])
   return baseQuality
 }
 
@@ -3377,6 +3378,15 @@ var levelDifferenceOfControl = {
   20: 1
 }
 
+function getLevelDif(kind, num) {
+  if (-10 <= num && num <= 20) {
+    return kind === 'Craft' ? levelDifferenceOfCraftsmanShip[num] : levelDifferenceOfControl[num]
+  } else if (num > 20) {
+    return kind === 'Craft' ? levelDifferenceOfCraftsmanShip['20'] : levelDifferenceOfControl['20']
+  } else if (num < -10) {
+    return kind === 'Craft' ? levelDifferenceOfCraftsmanShip['-10'] : levelDifferenceOfControl['-10']
+  }
+}
 // Test objects
 //cls, level, craftsmanship, control, craftPoints, actions
 /*

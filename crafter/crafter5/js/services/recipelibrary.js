@@ -67,7 +67,6 @@
 
     return this.$http.get('data/recipedb/' + cls + '.json').then(r => {
       var result = r.data.map(recipeForLang.bind(this, lang))
-      console.log(result)
       return result.sort((a, b) => a.level - b.level).sort((a, b) => a.name - b.name)
     })
   }
