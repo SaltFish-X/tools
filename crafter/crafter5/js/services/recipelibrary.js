@@ -23,47 +23,6 @@
     if (this._allClasses.indexOf(cls) < 0) {
       return this.$q.reject(new Error('invalid class: ' + cls))
     }
-    var key = cache_key(lang, cls)
-    var jobObj = [
-      { id: 8, name: 'Carpenter' },
-      { id: 9, name: 'Blacksmith' },
-      { id: 10, name: 'Armorer' },
-      { id: 11, name: 'Goldsmith' },
-      { id: 12, name: 'Leatherworker' },
-      { id: 13, name: 'Weaver' },
-      { id: 14, name: 'Alchemist' },
-      { id: 15, name: 'Culinarian' }
-    ]
-    var nameZh, nameOther
-    var nameZhUrl = 'https://cdn.ffxivteamcraft.com/assets/data/zh/zh-items.json'
-    var nameOtherUrl = 'https://cdn.ffxivteamcraft.com/assets/data/items.json'
-    // return this.$http
-    //   .get(nameOtherUrl)
-    //   .then(res => {
-    //     nameOther = res.data
-    //   })
-    //   .then(res => {
-    //     return this.$http.get(nameZhUrl).then(res => {
-    //       nameZh = res.data
-    //     })
-    //   })
-    //   .then(res => {
-    //     return this.$http.get('https://cdn.ffxivteamcraft.com/assets/data/recipes.json').then(res => {
-    //       var job = jobObj.find(e => e.name === cls)
-    //       var jobId = job.id
-    //       var resArr = res.data.filter(e => e.job === jobId)
-    //       resArr.forEach(e => {
-    //         lang === 'cn'
-    //           ? (e.name = { cn: (nameZh[e.result] && nameZh[e.result].zh) || '暂无翻译' })
-    //           : (e.name = { [lang]: nameOther[e.result] && nameOther[e.result][lang] })
-    //         e.baseLevel = e.level
-    //       })
-
-    //       var result = resArr.map(recipeForLang.bind(this, lang))
-    //       result.sort((a, b) => a.level - b.level)
-    //       return result
-    //     })
-    //   })
 
     return this.$http.get('data/recipedb/' + cls + '.json').then(r => {
       var result = r.data.map(recipeForLang.bind(this, lang))
