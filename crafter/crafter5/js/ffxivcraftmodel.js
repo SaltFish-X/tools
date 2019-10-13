@@ -391,6 +391,8 @@ function ApplyModifiers(s, action, condition) {
   if (AllActions.innovation.shortName in s.effects.countDowns) {
     control += 0.5 * s.synth.crafter.control
   }
+  // add control limit 5.0
+  control >= 3000 ? (control = 3000) : 0
 
   // Effects modifying level difference
   var effCrafterLevel = getEffectiveCrafterLevel(s.synth)
