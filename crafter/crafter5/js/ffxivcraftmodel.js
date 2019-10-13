@@ -101,11 +101,9 @@ function Synth(crafter, recipe, maxTrickUses, reliabilityIndex, useConditions, m
  * @returns levelCorrectedProgress
  */
 Synth.prototype.calculateBaseProgressIncrease = function(levelDifference, craftsmanship, crafterLevel, recipeLevel) {
-  var baseProgress = 0
-  baseProgress = Math.floor(
-    (getLevelDif('Craft', levelDifference) * (0.21 * craftsmanship + 2) * (10000 + craftsmanship)) / (10000 + suggestedCraftsmanship[recipeLevel])
+  return (
+    Math.floor(getLevelDif('Craft', levelDifference) * (0.21 * craftsmanship + 2) * (10000 + craftsmanship)) / (10000 + suggestedCraftsmanship[recipeLevel])
   )
-  return baseProgress
 }
 
 /**
@@ -117,9 +115,7 @@ Synth.prototype.calculateBaseProgressIncrease = function(levelDifference, crafts
  * @returns levelCorrectedQuality
  */
 Synth.prototype.calculateBaseQualityIncrease = function(levelDifference, control, crafterLevel, recipeLevel) {
-  var baseQuality = 0
-  baseQuality = Math.floor(getLevelDif('control', levelDifference) * (0.35 * control + 35) * (10000 + control)) / (10000 + suggestedControl[recipeLevel])
-  return baseQuality
+  return Math.floor(getLevelDif('control', levelDifference) * (0.35 * control + 35) * (10000 + control)) / (10000 + suggestedControl[recipeLevel])
 }
 
 function isActionEq(action1, action2) {
@@ -3179,165 +3175,6 @@ var LevelTable = {
   80: 420
 }
 
-// 新颖1等级对应表
-var Ing1RecipeLevelTable = {
-  40: 36,
-  41: 36,
-  42: 37,
-  43: 38,
-  44: 39,
-  45: 40,
-  46: 41,
-  47: 42,
-  48: 43,
-  49: 44,
-  50: 45,
-  55: 50, // 50_1star     *** unverified
-  70: 51, // 50_2star     *** unverified
-  90: 58, // 50_3star     *** unverified
-  110: 59, // 50_4star     *** unverified
-  115: 100, // 51 @ 169/339 difficulty
-  120: 101, // 51 @ 210/410 difficulty
-  125: 102, // 52
-  130: 110, // 53
-  133: 111, // 54
-  136: 112, // 55
-  139: 126, // 56
-  142: 131, // 57
-  145: 134, // 58
-  148: 137, // 59
-  150: 140, // 60
-  160: 151, // 60_1star
-  180: 152, // 60_2star
-  210: 153, // 60_3star
-  220: 153, // 60_3star
-  250: 154, // 60_4star
-  255: 238, // 61 @ 558/1116 difficulty
-  260: 240, // 61 @ 700/1400 difficulty
-  265: 242, // 62
-  270: 250, // 63
-  273: 251, // 64
-  276: 252, // 65
-  279: 266, // 66
-  282: 271, // 67
-  285: 274, // 68
-  288: 277, // 69
-  290: 280, // 70
-  300: 291, // 70_1star
-  320: 292, // 70_2star
-  350: 293, // 70_3star
-  380: 294, // 70_4star
-  390: 365, // 71
-  395: 375, // 72
-  400: 385, // 73
-  403: 393, // 74
-  406: 396, // 75
-  409: 399, // 76
-  412: 402, // 77
-  415: 405, // 78
-  418: 408, // 79
-  420: 411 // 80
-}
-
-// 新颖2等级对应表
-var Ing2RecipeLevelTable = {
-  40: 33,
-  41: 34,
-  42: 35,
-  43: 36,
-  44: 37,
-  45: 38,
-  46: 39,
-  47: 40,
-  48: 40,
-  49: 41,
-  50: 42,
-  55: 47, // 50_1star     *** unverified
-  70: 48, // 50_2star     *** unverified
-  90: 56, // 50_3star     *** unverified
-  110: 57, // 50_4star     *** unverified
-  115: 97, // 51 @ 169/339 difficulty
-  120: 99, // 51 @ 210/410 difficulty
-  125: 101, // 52
-  130: 109, // 53
-  133: 110, // 54
-  136: 111, // 55
-  139: 125, // 56
-  142: 130, // 57
-  145: 133, // 58
-  148: 136, // 59
-  150: 139, // 60
-  160: 150, // 60_1star
-  180: 151, // 60_2star
-  210: 152, // 60_3star
-  220: 152, // 60_3star
-  250: 153, // 60_4star
-  255: 237, // 61 @ 558/1116 difficulty
-  260: 239, // 61 @ 700/1400 difficulty
-  265: 241, // 62
-  270: 249, // 63
-  273: 250, // 64
-  276: 251, // 65
-  279: 265, // 66
-  282: 270, // 67
-  285: 273, // 68
-  288: 276, // 69
-  290: 279, // 70
-  300: 290, // 70_1star
-  320: 291, // 70_2star
-  350: 292, // 70_3star
-  380: 293, // 70_4star
-  390: 350, // 71
-  395: 360, // 72
-  400: 370, // 73
-  403: 380, // 74
-  406: 383, // 75
-  409: 386, // 76
-  412: 389, // 77
-  415: 392, // 78
-  418: 395, // 79
-  420: 398 // 80
-}
-
-// 妮美雅的纺车等级对应表
-var NymeaisWheelTable = {
-  1: 30,
-  2: 30,
-  3: 30,
-  4: 20,
-  5: 20,
-  6: 20,
-  7: 10,
-  8: 10,
-  9: 10,
-  10: 10,
-  11: 10
-}
-
-// 进度惩罚（等级压制）
-var ProgressPenaltyTable = {
-  180: -0.02,
-  210: -0.035,
-  220: -0.035,
-  250: -0.04,
-  320: -0.02,
-  350: -0.035,
-  380: -0.0465 // 70_4star
-}
-
-// 品质惩罚（等级压制）
-var QualityPenaltyTable = {
-  0: -0.02,
-  90: -0.03,
-  160: -0.05,
-  180: -0.06,
-  200: -0.07,
-  245: -0.08,
-  300: -0.09,
-  310: -0.1,
-  340: -0.11,
-  380: -0.1305
-}
 // 等级差系数表(加工精度)
 var levelDifferenceOfCraftsmanShip = {
   '-10': 0.75,
@@ -3405,6 +3242,21 @@ var levelDifferenceOfControl = {
   18: 1,
   19: 1,
   20: 1
+}
+
+// 妮美雅的纺车等级对应表
+var NymeaisWheelTable = {
+  1: 30,
+  2: 30,
+  3: 30,
+  4: 20,
+  5: 20,
+  6: 20,
+  7: 10,
+  8: 10,
+  9: 10,
+  10: 10,
+  11: 10
 }
 
 function getLevelDif(kind, num) {
