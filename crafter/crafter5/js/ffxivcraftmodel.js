@@ -35,7 +35,16 @@ Logger.prototype.log = function(myString) {
         console.log(msg);
     }
 };
-
+/**
+ * @description 工匠数据
+ * @param cls 工匠职业
+ * @param level 等级
+ * @param craftsmanship 作业精度
+ * @param control 加工精度
+ * @param craftPoints 制作力
+ * @param specialist 是否为专家
+ * @param actions 可用技能
+ */
 function Crafter(cls, level, craftsmanship, control, craftPoints, specialist, actions) {
     this.cls = cls;
     this.craftsmanship = craftsmanship;
@@ -50,7 +59,15 @@ function Crafter(cls, level, craftsmanship, control, craftPoints, specialist, ac
         this.actions = actions;
     }
 }
-
+/**
+ * @description 配方
+ * @param level 配方等级
+ * @param difficulty 进展
+ * @param durability 耐久度
+ * @param startQuality 起始品质
+ * @param maxQuality 最大品质
+ * @param aspect
+ */
 function Recipe(level, difficulty, durability, startQuality, maxQuality, aspect) {
     this.level = level;
     this.difficulty = difficulty;
@@ -59,7 +76,15 @@ function Recipe(level, difficulty, durability, startQuality, maxQuality, aspect)
     this.maxQuality = maxQuality;
     this.aspect = aspect;
 }
-
+/**
+ * @description 求解器
+ * @param crafter 工匠职业
+ * @param recipe 配方
+ * @param maxTrickUses 最大秘诀使用次数
+ * @param reliabilityIndex 可靠性
+ * @param useConditions 是否限制工序长度
+ * @param maxLength 最大工序长度
+ */
 function Synth(crafter, recipe, maxTrickUses, reliabilityIndex, useConditions, maxLength) {
     this.crafter = crafter;
     this.recipe = recipe;
@@ -69,6 +94,14 @@ function Synth(crafter, recipe, maxTrickUses, reliabilityIndex, useConditions, m
     this.maxLength = maxLength;
 }
 
+/**
+ * @description 计算进度条推进
+ * @param levelDifference 等级差系数
+ * @param craftsmanship 作业精度
+ * @param crafterLevel 制作者等级
+ * @param recipeLevel 配方等级
+ * @returns levelCorrectedProgress
+ */
 Synth.prototype.calculateBaseProgressIncrease = function (levelDifference, craftsmanship, crafterLevel, recipeLevel) {
     var baseProgress = 0;
     var levelCorrectionFactor = 0;
@@ -128,6 +161,14 @@ Synth.prototype.calculateBaseProgressIncrease = function (levelDifference, craft
     return levelCorrectedProgress;
 };
 
+/**
+ * @description 计算品质条推进
+ * @param levelDifference 等级差系数
+ * @param control 加工精度
+ * @param crafterLevel 制作者等级
+ * @param recipeLevel 配方等级
+ * @returns levelCorrectedQuality
+ */
 Synth.prototype.calculateBaseQualityIncrease = function (levelDifference, control, crafterLevel, recipeLevel) {
     var baseQuality = 0;
     var recipeLevelPenalty = 0;
@@ -182,6 +223,25 @@ function EffectTracker() {
     this.indefinites = {};
 }
 
+/**
+ * @description
+ * @param synth
+ * @param step
+ * @param lastStep
+ * @param action
+ * @param durabilityState
+ * @param cpState
+ * @param bonusMaxCp
+ * @param qualityState
+ * @param progressState
+ * @param wastedActions
+ * @param trickUses
+ * @param nameOfElementUses
+ * @param reliability
+ * @param crossClassActionList
+ * @param effects
+ * @param condition
+ */
 function State(synth, step, lastStep, action, durabilityState, cpState, bonusMaxCp, qualityState, progressState, wastedActions, trickUses, nameOfElementUses, reliability, crossClassActionList, effects, condition) {
     this.synth = synth;
     this.step = step;
@@ -219,12 +279,16 @@ State.prototype.clone = function () {
     return new State(this.synth, this.step, this.lastStep, this.action, this.durabilityState, this.cpState, this.bonusMaxCp, this.qualityState, this.progressState, this.wastedActions, this.trickUses, this.nameOfElementUses, this.reliability, clone(this.crossClassActionList), clone(this.effects), this.condition);
 };
 
+/**
+ * @description 检测资源是否用完
+ * @returns
+ */
 State.prototype.checkViolations = function () {
     // Check for feasibility violations
     var progressOk = false;
     var cpOk = false;
     var durabilityOk = false;
-    var trickOk = false;
+    var trickOk = false; // 秘籍状态
     var reliabilityOk = false;
 
     if (this.progressState >= this.synth.recipe.difficulty) {
@@ -257,6 +321,11 @@ State.prototype.checkViolations = function () {
     };
 };
 
+/**
+ * @description 求解器状态更新
+ * @param synth
+ * @returns
+ */
 function NewStateFromSynth(synth) {
     var step = 0;
     var lastStep = 0;
@@ -326,6 +395,10 @@ function calcNameOfMultiplier(s) {
     return nameOfMultiplier;
 }
 
+/**
+ * @description 获取等效工匠等级
+ * @param synth 求解器
+ */
 function getEffectiveCrafterLevel(synth) {
     var effCrafterLevel = synth.crafter.level;
     if (LevelTable[synth.crafter.level]) {
@@ -334,6 +407,13 @@ function getEffectiveCrafterLevel(synth) {
     return effCrafterLevel;
 }
 
+/**
+ * @description 求解器启动
+ * @param s
+ * @param action
+ * @param condition
+ * @returns
+ */
 function ApplyModifiers(s, action, condition) {
 
     // Effect Modifiers
@@ -808,6 +888,17 @@ function UpdateEffectCounters(s, action, condition, successProbability) {
     }
 }
 
+/**
+ * @description 状态更新
+ * @param s
+ * @param action
+ * @param progressGain
+ * @param qualityGain
+ * @param durabilityCost
+ * @param cpCost
+ * @param condition
+ * @param successProbability
+ */
 function UpdateState(s, action, progressGain, qualityGain, durabilityCost, cpCost, condition, successProbability) {
     // State tracking
     s.progressState += progressGain;
@@ -827,6 +918,7 @@ function UpdateState(s, action, progressGain, qualityGain, durabilityCost, cpCos
     s.cpState = Math.min(s.cpState, s.synth.crafter.craftPoints + s.bonusMaxCp);
 }
 
+// 下面这些函数都是输出log的，暂不更新（也可能无需更新）
 function simSynth(individual, startState, assumeSuccess, verbose, debug, logOutput) {
     verbose = verbose !== undefined ? verbose : true;
     debug = debug !== undefined ? debug : false;
@@ -1593,11 +1685,21 @@ function getMaxProperty(stateArray, propName) {
     return maxProperty;
 }
 
+/**
+ * @description HQ进度条转品质？存疑
+ * @param hqPercent HQ进度条
+ * @returns HQ率
+ */
 function qualityFromHqPercent(hqPercent) {
     var x = hqPercent;
     return -5.6604E-6 * Math.pow(x, 4) + 0.0015369705 * Math.pow(x, 3) - 0.1426469573 * Math.pow(x, 2) + 5.6122722959 * x - 5.5950384565;
 }
 
+/**
+ * @description 品质到HQ进度条？存疑
+ * @param qualityPercent 品质百分比
+ * @returns hqPercent HQ进度条
+ */
 function hqPercentFromQuality(qualityPercent) {
     var hqPercent = 1;
     if (qualityPercent === 0) {
@@ -1963,6 +2065,8 @@ function clone(x) {
     return _clone(x);
 }
 
+// 等效工匠等级
+// 详细说明 https://ngabbs.com/read.php?tid=18839082
 var LevelTable = {
     51: 120, // 120
     52: 125, // 125
@@ -1996,6 +2100,7 @@ var LevelTable = {
     80: 420 
 };
 
+// 新颖1等级对应表
 var Ing1RecipeLevelTable = {
     40: 36,
     41: 36,
@@ -2055,6 +2160,7 @@ var Ing1RecipeLevelTable = {
     420: 411,   // 80
 };
 
+// 新颖2等级对应表
 var Ing2RecipeLevelTable = {
     40: 33,
     41: 34,
@@ -2114,6 +2220,7 @@ var Ing2RecipeLevelTable = {
     420: 398,   // 80
 };
 
+// 妮美雅的纺车等级对应表
 var NymeaisWheelTable = {
     1: 30,
     2: 30,
@@ -2128,6 +2235,7 @@ var NymeaisWheelTable = {
     11: 10,
 };
 
+// 进度惩罚（等级压制）
 var ProgressPenaltyTable = {
     180: -0.02,
     210: -0.035,
@@ -2138,6 +2246,7 @@ var ProgressPenaltyTable = {
 	380: -0.0465,   // 70_4star
 };
 
+// 品质惩罚（等级压制）
 var QualityPenaltyTable = {
     0: -0.02,
     90: -0.03,
