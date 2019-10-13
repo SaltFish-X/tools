@@ -382,6 +382,7 @@ function ApplyModifiers(s, action, condition) {
   //=================
   var craftsmanship = s.synth.crafter.craftsmanship
   var control = s.synth.crafter.control
+  var originalControl = s.synth.crafter.control
 
   // Effects modifying control
   if (AllActions.innerQuiet.shortName in s.effects.countUps) {
@@ -392,7 +393,7 @@ function ApplyModifiers(s, action, condition) {
     control += 0.5 * s.synth.crafter.control
   }
   // add control limit 5.0
-  control >= 3000 ? (control = 3000) : 0
+  control - originalControl >= 3000 ? (control = 3000 + originalControl) : 0
 
   // Effects modifying level difference
   var effCrafterLevel = getEffectiveCrafterLevel(s.synth)
