@@ -105,8 +105,6 @@ Synth.prototype.calculateBaseProgressIncrease = function(levelDifference, crafts
   baseProgress = Math.floor(
     (getLevelDif('Craft', levelDifference) * (0.21 * craftsmanship + 2) * (10000 + craftsmanship)) / (10000 + suggestedCraftsmanship[recipeLevel])
   )
-
-  console.log(getLevelDif('Craft', levelDifference), levelDifference, suggestedCraftsmanship[recipeLevel])
   return baseProgress
 }
 
@@ -362,7 +360,7 @@ function calcNameOfMultiplier(s) {
 
 /**
  * @description 获取等效工匠等级
- * @param synth 求解器
+ * @param synth
  */
 function getEffectiveCrafterLevel(synth) {
   var effCrafterLevel = synth.crafter.level
@@ -398,7 +396,8 @@ function ApplyModifiers(s, action, condition) {
   var effCrafterLevel = getEffectiveCrafterLevel(s.synth)
   var effRecipeLevel = s.synth.recipe.level
   var levelDifference = effCrafterLevel - effRecipeLevel
-  var originalLevelDifference = crafterLevel - recipeLevel
+  var originalLevelDifference = effCrafterLevel - effRecipeLevel
+  var recipeLevel = effRecipeLevel
   var stars = s.synth.recipe.stars
 
   if (AllActions.ingenuity2.shortName in s.effects.countDowns) {
